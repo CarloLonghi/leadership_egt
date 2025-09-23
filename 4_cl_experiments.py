@@ -1,8 +1,9 @@
 import numpy as np
 import evoEGT as evo
-from heterogeneous4_leaderstrat import calcH, calcWCD
+from heterogeneous4 import calcH, calcWCD
+import os
 
-def coop_pF_r(rv,M,N,HZ,beta,eps,pSv,deltaLv,f,betaF):
+def coop_pF_r(rv,M,N,HZ,beta,eps,pSv,deltaLv,f,betaF,file,backup):
 # Input: pFv, rv, Mv (vectors with values of pF, r, and M), N, HZ (H or Z), beta, eps
 # Output: matrix with the fraction of cooperators as a function of pF and r
     if np.isscalar(HZ):
@@ -10,20 +11,45 @@ def coop_pF_r(rv,M,N,HZ,beta,eps,pSv,deltaLv,f,betaF):
 
     MAT = np.zeros((len(rv), len(deltaLv), len(pSv), 4))
 
-    for iddl, deltaL in enumerate(deltaLv):
-        deltaF=deltaL
-        for idps, pS in enumerate(pSv):
+    deltaLv = np.array(deltaLv)
+
+    if os.path.isfile(backup):
+        with open(folder + backup, "r") as f:
+            content = f.read().strip().split(',')
+        params = list(map(int, content))
+    else:
+        params = [0, 0]
+
+    if os.path.isfile(file):
+        MAT = np.load(file)
+    else:
+        MAT = np.zeros((len(rv), len(deltaLv), len(pSv), 4))
+        np.save(file, MAT)
+
+
+    for iddl in range(params[0], deltaLv.shape[0]):
+        deltaL = deltaLv[iddl]
+        deltaF = deltaL
+        for idps in range(params[1] if iddl == params[0] else 0, pSv.shape[0]):
+            pS = pSv[idps]
+
             pF=np.zeros((2,2))
             pF[0,0] = 1/(1+np.exp(-betaF*(f)))
             pF[1,1] = 1/(1+np.exp(-betaF*(f)))
             pF[0,1] = 1/(1+np.exp(-betaF*(f+deltaF)))
-            pF[1,0] = 1/(1+np.exp(-betaF*(f-deltaF)))
+            pF[1,0] = 1/(1+np.exp(-betaF*(f-deltaF)))   
 
             WCD=calcWCD(N,eps,pF,deltaL,pS,M)
             print(deltaL, pS)
+            
             for idr, r, in enumerate(rv):
                 SD,fixM = evo.Wgroup2SD(WCD,H,[r,-1.],beta,infocheck=False)
                 MAT[idr, iddl, idps] = SD[:,0]
+
+            np.save(file, MAT)
+            with open(folder + backup, "w") as f:
+                f.write(f"{iddl},{idps}")
+
     return MAT
 
 def plotCOOPheat(MAT,f1v,f2v,sv,label):
@@ -96,7 +122,8 @@ if __name__ == "__main__":
 ####### Plot heatmap #########################################
     eps=0.01 #0.01
     Z=100
-    N=9
+    k=4
+    N=9*k
     beta=1.
     M=0
     f=0
@@ -104,10 +131,12 @@ if __name__ == "__main__":
 
     deltaLv=[0, 1, 2, 4, 8]
     pSv=np.linspace(0,1.,num=50)
-    rv=np.linspace(1,10,num=10)
+    rv=[3*k, 6*k, 8*k]
     
-    labfilenpy='./newtests/2bits/leadstrat/multileader/res_new'
-    MAT=coop_pF_r(rv,M,N,Z,beta,eps,pSv,deltaLv,f,betaF)
+    folder = './newtests/2bits/strengthstrat/multileader/'
+    labfilenpy= folder + 'res_k4'
+    backup = folder + 'backup_k4'
+    MAT=coop_pF_r(rv,M,N,Z,beta,eps,pSv,deltaLv,f,betaF,labfilenpy,backup)
     np.save(labfilenpy,MAT)             # save matrix for heatmap
     print('data saved to file!')
     
