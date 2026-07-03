@@ -1,12 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar  7 10:40:35 2019
-
-@author: abraxas
-"""
-
-import evoEGT as evo
+import mechanics_singleleader.evoEGT as evo
 
 import numpy as np
 import math

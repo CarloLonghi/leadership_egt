@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import evoEGT as evo
+import mechanics_singleleader.evoEGT as evo
 
 import numpy as np
 
