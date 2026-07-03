@@ -123,7 +123,7 @@ if __name__ == "__main__":
     np.save(labfilenpy,MAT)             # save matrix for heatmap
     print('data saved to file!')
     
-    MAT=np.load(labfilenpy+'.npy')      # load matrix for heatmap 
-    plotCOOPheat(MAT,deltaLv,pSv,rv,labfilenpy)      # plot heatmap
+    # MAT=np.load(labfilenpy+'.npy')      # load matrix for heatmap 
+    # plotCOOPheat(MAT,deltaLv,pSv,rv,labfilenpy)      # plot heatmap
     #plotsingleheat(MAT,fv,rv,labfilenpy)
 #####################################################

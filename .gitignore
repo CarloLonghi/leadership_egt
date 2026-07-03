@@ -1,9 +1,9 @@
 *.pdf
 __pycache__
+data_followers
 results
 .vscode
 2bitleader
-2leaders
 despot
 figures
 multileader
@@ -11,3 +11,5 @@ newtests
 test
 *.ipynb
 *_plot*.py
+2leaders
+summary_*

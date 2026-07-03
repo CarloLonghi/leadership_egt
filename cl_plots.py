@@ -6,21 +6,22 @@ import math
 file = 'newtests/2bits/strengthstrat/singleleader/res_2bits_singleleader'
 data = np.load(file + '.npy')
 
-nr = 2
-nc = 5
+nr = 1
+nc = 3
 fntsize=15
 
+k=4
 pSv=np.linspace(0.,1.,num=50)
 deltaLv=[0, 1, 2, 4, 8]
 f=0
 betaF=1.
-N = 9
+N = 9*k
 eps = 0.01
 eps1 = 1 - eps
-rv=np.linspace(1,10,num=10)
+rv=np.array([3*k, 6*k, 8*k])
 
 
-fig,axs=plt.subplots(nrows=nr, ncols=nc, sharex='all', sharey='all', figsize=(10,5))
+fig,axs=plt.subplots(nrows=nr, ncols=nc, sharex='all', sharey='all', figsize=(10,4))
 fig.subplots_adjust(hspace=0.4, wspace=0.2)
 nticksY=6
 nticksX=3
@@ -107,8 +108,8 @@ for idr, r in enumerate(rv):
         ax.set_ylim(0.0, 1.0)
         ax.plot(res, label='$\Delta_f=\Delta_f=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
-        if i==nr-1: ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-        if j==0: ax.set_ylabel(r'cooperation level', fontsize=fntsize)
+        ax.set_xlabel(r'$p_s$', fontsize=fntsize)
+        if idr==0: ax.set_ylabel(r'cooperation level', fontsize=fntsize)
         ax.text(20,1.06,"$r$=%d" % rv[idr], size=13)
         #ax.set_ylim(0, 1)
 

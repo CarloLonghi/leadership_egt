@@ -8,7 +8,7 @@ def coop_pF_r(rv,M,N,HZ,beta,eps,pSv,f,betaF,deltaFv):
     if np.isscalar(HZ):
         H=calcH(N-1,HZ-1)
 
-    MAT = np.zeros((len(deltaFv), len(pSv), len(rv), 4))
+    MAT = np.zeros((len(deltaFv), len(pSv), len(rv), 2))
 
     for iddf, deltaF in enumerate(deltaFv):
         pF=np.zeros((2,2))
@@ -26,12 +26,12 @@ def coop_pF_r(rv,M,N,HZ,beta,eps,pSv,f,betaF,deltaFv):
                 MAT[iddf, idps, idr, :] = SD[:,0]
     return MAT
 
-def plotCOOPheat(MAT,deltaFv,pSv,rv,label):
+def plotCOOPheat():
 # Input: MAT (matrix from "coop_pF_r" function), pFv, rv ,Mv (vectors with values of pF, r, and M), label (name for the output file)
 # Output: heatmap plot of the fraction of cooperators as a function of pF and r, for different M
     import matplotlib.pyplot as plt
     import matplotlib.patches as mpatches
-    fntsize=13
+    fntsize=18
     nr=2
     nc=2
     labels = ['ALLD', 'NCLD', 'NDLC', 'ALLC']
@@ -68,26 +68,26 @@ def plotCOOPheat(MAT,deltaFv,pSv,rv,label):
         f.clf()     
     return
 
-def plotsingleheat(MAT,fv,rv,label):
-# Input: MAT (matrix from "coop_pF_r" function), pFv, rv ,Mv (vectors with values of pF, r, and M), label (name for the output file)
-# Output: heatmap plot of the fraction of cooperators as a function of pF and r, for different M
-    import matplotlib.pyplot as plt
-    fntsize=12
-    f,ax=plt.subplots()
-    h=ax.imshow(MAT,origin='lower', interpolation='none',aspect='auto')
-    nticksY=5
-    nticksX=3
-    ax.set_xticks(np.linspace(0, MAT.shape[1]-1, nticksX))
-    ax.set_yticks(np.linspace(0, MAT.shape[0]-1, nticksY))
-    ax.set_xticklabels(np.linspace(fv[0],fv[-1],nticksX))
-    ax.set_yticklabels(np.linspace(rv[0],rv[-1],nticksY))
-    ax.set_xlabel(r'$f$', fontsize=fntsize)
-    ax.set_ylabel(r'$r$', fontsize=fntsize)
-#cb=f.colorbar(h, fraction=0.1,format='%.2f')
-    #cb.set_label(label=r'$f_C$')
-    f.savefig('figures/single_strategies_r5.png',bbox_inches='tight',dpi=300)
-    f.clf()     
-    return
+# def plotsingleheat(MAT,fv,rv,label):
+# # Input: MAT (matrix from "coop_pF_r" function), pFv, rv ,Mv (vectors with values of pF, r, and M), label (name for the output file)
+# # Output: heatmap plot of the fraction of cooperators as a function of pF and r, for different M
+#     import matplotlib.pyplot as plt
+#     fntsize=12
+#     f,ax=plt.subplots()
+#     h=ax.imshow(MAT,origin='lower', interpolation='none',aspect='auto')
+#     nticksY=5
+#     nticksX=3
+#     ax.set_xticks(np.linspace(0, MAT.shape[1]-1, nticksX))
+#     ax.set_yticks(np.linspace(0, MAT.shape[0]-1, nticksY))
+#     ax.set_xticklabels(np.linspace(fv[0],fv[-1],nticksX))
+#     ax.set_yticklabels(np.linspace(rv[0],rv[-1],nticksY))
+#     ax.set_xlabel(r'$f$', fontsize=fntsize)
+#     ax.set_ylabel(r'$r$', fontsize=fntsize)
+# #cb=f.colorbar(h, fraction=0.1,format='%.2f')
+#     #cb.set_label(label=r'$f_C$')
+#     f.savefig('multileader_single_strategies_r5.png',bbox_inches='tight',dpi=300)
+#     f.clf()     
+#     return
 
 
 if __name__ == "__main__":
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     np.save(labfilenpy,MAT)             # save matrix for heatmap
     print('data saved to file!')
     
-    MAT=np.load(labfilenpy+'.npy')      # load matrix for heatmap 
-    plotCOOPheat(MAT,deltaFv,pSv,rv,labfilenpy)      # plot heatmap
+    # MAT=np.load(labfilenpy+'.npy')      # load matrix for heatmap 
+    plotCOOPheat()      # plot heatmap
     #plotsingleheat(MAT,fv,rv,labfilenpy)
 #####################################################
