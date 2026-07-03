@@ -1,6 +1,6 @@
 import numpy as np
-import evoEGT as evo
-from heterogeneous4 import calcH, calcWCD
+import mechanics.evoEGT as evo
+from mechanics.heterogeneous4 import calcH, calcWCD
 import os
 import concurrent
 import multiprocessing as mp

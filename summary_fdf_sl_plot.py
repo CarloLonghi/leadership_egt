@@ -16,10 +16,10 @@ idr = 5
 
 nr = 2
 nc = 4
-fntsize=15
+fntsize=18
 
 pSv=np.linspace(0.,1.,num=50)
-deltaLv=[0, 1, 2, 4, 8]
+deltaLv=[0, 1, 2, 4]
 betaF=1.
 N = 9
 eps = 0.01
@@ -108,17 +108,17 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += (benefit/N) * data[idr, iddl, idps, strat]            
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
     ax.set_ylabel(r'cooperation level', fontsize=fntsize)
-    ax.text(-48,0.51,r"$f=-4$", size=13)
-    ax.text(-48,0.41,r"$\Delta_f=0$", size=13)
+    ax.text(-60,0.53,r"$f=-4$", size=fntsize)
+    ax.text(-60,0.39,r"$\Delta_f=0$", size=fntsize)
     # ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-    ax.set_title("1 bit", size=13)
+    ax.set_title("B", size=fntsize, fontweight="bold")
 
 file = './newtests/1bit/leadership/singleleader/res_fm4_df8'
 data = np.load(file + '.npy')
@@ -194,15 +194,15 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += (benefit/N) * data[idr, iddl, idps, strat]            
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
     ax.set_ylabel(r'cooperation level', fontsize=fntsize)
-    ax.text(-48,0.51,r"$f=-4$", size=13)
-    ax.text(-48,0.41,r"$\Delta_f=8$", size=13)
+    ax.text(-60,0.53,r"$f=-4$", size=fntsize)
+    ax.text(-60,0.39,r"$\Delta_f=8$", size=fntsize)
     ax.set_xlabel(r'$p_s$', fontsize=fntsize)
     # ax.set_title("1 bit" % rv[idr], size=13)
 
@@ -281,14 +281,14 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += (benefit/N) * data[idr, iddl, idps, strat]
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
     # ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-    ax.set_title("2 bits strength", size=13)
+    ax.set_title("S", size=fntsize, fontweight="bold")
 
 file = './newtests/2bits/strengthstrat/singleleader/res_fm4_df8'
 data = np.load(file + '.npy')
@@ -363,9 +363,9 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += (benefit/N) * data[idr, iddl, idps, strat]
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
@@ -440,14 +440,14 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += (benefit/N) * data[idr, iddl, idps, strat]
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
     # ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-    ax.set_title("2 bits leader", size=13)
+    ax.set_title("L", size=fntsize, fontweight="bold")
 
 file = './newtests/2bits/leadstrat/singleleader/res_fm4_df8'
 data = np.load(file + '.npy')
@@ -515,9 +515,9 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += (benefit/N) * data[idr, iddl, idps, strat]
             
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
@@ -612,14 +612,14 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += (benefit/N) * data[idr, iddl, idps, strat]
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
     # ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-    ax.set_title("4 bits", size=13)
+    ax.set_title("S + L", size=fntsize, fontweight="bold")
 
 file = './newtests/4bits/singleleader/res_fm4_df8'
 data = np.load(file + '.npy')
@@ -708,9 +708,9 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += (benefit/N) * data[idr, iddl, idps, strat]
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
@@ -722,7 +722,7 @@ legend_elements = [Line2D([], [], marker='None', label='$\Delta_l:$', linestyle=
 legend_elements += [Line2D([], [], marker='s', color=cmap((idx)/(len(deltaLv))), label='%d'%deltaLv[idx],
                           markerfacecolor=cmap((idx)/(len(deltaLv))), markersize=10, linestyle='None') for idx in range(len(deltaLv))]
 plt.legend( loc='upper center', bbox_to_anchor=(-1.3, -0.4),
-          fancybox=True, shadow=False, ncol=6, columnspacing=0.0, handles=legend_elements,handletextpad=-0.3,fontsize=13)
-plt.savefig('./newtests/summary_fdf_plots_singleleader.png', bbox_inches='tight', dpi=300)
+          fancybox=True, shadow=False, ncol=6, columnspacing=0.0, handles=legend_elements,handletextpad=-0.3,fontsize=fntsize)
+plt.savefig('./newtests/summary_fdf_plots_singleleader_d4.png', bbox_inches='tight', dpi=300)
 
 # plt.show()

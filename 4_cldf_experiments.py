@@ -1,6 +1,6 @@
 import numpy as np
-import evoEGT as evo
-from heterogeneous4 import calcH, calcWCD
+import mechanics.evoEGT as evo
+from mechanics.heterogeneous4 import calcH, calcWCD
 
 def coop_pF_r(r,M,N,HZ,beta,eps,pSv,deltaFv,deltaLv,f,betaF):
 # Input: pFv, rv, Mv (vectors with values of pF, r, and M), N, HZ (H or Z), beta, eps

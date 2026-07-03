@@ -6,7 +6,7 @@ Created on Thu Mar  7 10:40:35 2019
 @author: abraxas
 """
 
-import evoEGT as evo
+import mechanics.evoEGT as evo
 
 import numpy as np
 

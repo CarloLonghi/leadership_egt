@@ -16,11 +16,11 @@ idr = 5
 
 nr = 2
 nc = 4
-fntsize=15
+fntsize=18
 
-f=1
+f=0
 pSv=np.linspace(0.,1.,num=50)
-deltaLv=[0, 1, 2, 4, 8]
+deltaLv=[0, 1, 2, 4]
 betaF=1.
 N = 9
 eps = 0.01
@@ -28,8 +28,8 @@ eps1 = 1 - eps
 rv=np.array([3,6,8])
 
 
-fig,axs=plt.subplots(nrows=nr, ncols=nc, sharex='all', sharey='all', figsize=(10,6))
-fig.subplots_adjust(hspace=0.4, wspace=0.2)
+fig,axs=plt.subplots(nrows=nr, ncols=nc, sharex='all', sharey='all', figsize=(14,7))
+fig.subplots_adjust(hspace=0.2, wspace=0.2)
 nticksY=6
 nticksX=3
 
@@ -38,7 +38,13 @@ cmap = plt.get_cmap('viridis')
 file = './newtests/1bit/leadership/singleleader/res_eps03'
 data = np.load(file + '.npy')
 
-ax = axs[0,0]
+x_range = pSv.shape[0] - 1  # e.g. 100
+y_range = 1.0  # ylim is 0 to 1
+
+desired_physical_ratio = 12/13  # height/width of the box you want
+
+ax = axs[1,0]
+ax.set_aspect(desired_physical_ratio * x_range / y_range)
 for iddl, deltaL in enumerate(deltaLv):
     deltaF = deltaL
     fs = 1/(1+np.exp(-deltaL))
@@ -108,22 +114,24 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += (benefit/N) * data[idr, iddl, idps, strat]            
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_xlabel(r'$p_s$', fontsize=fntsize)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
     ax.set_ylabel(r'cooperation level', fontsize=fntsize)
-    ax.text(-55,0.51,r"$Single$", size=13)
-    ax.text(-55,0.41,r"$Leader$", size=13)
+    # ax.text(-68,0.53,r"$Single$", size=fntsize)
+    # ax.text(-68,0.39,r"$Leader$", size=fntsize)
+    ax.text(-38,0.0,"Single Leader", size=fntsize, rotation=90.0, fontweight="bold")
     # ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-    ax.set_title("1 bit", size=13)
 
 file = './newtests/1bit/leadership/multileader/res_eps03'
 data = np.load(file + '.npy')
 
-ax = axs[1,0]
+ax = axs[0,0]
+ax.set_aspect(desired_physical_ratio * x_range / y_range)
 for iddl, deltaL in enumerate(deltaLv):
     deltaF = deltaL
     pleadS = 1/(1+np.exp(-deltaL))
@@ -204,24 +212,26 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += benefit * data[idr, iddl, idps, strat]
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
-    ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
+    ax.plot(res, label='$\Delta=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
     ax.set_ylabel(r'cooperation level', fontsize=fntsize)
-    ax.text(-55,0.51,r"$Multiple$", size=13)
-    ax.text(-55,0.41,r"$Leaders$", size=13)
+    # ax.text(-68,0.53,r"$Multiple$", size=fntsize)
+    # ax.text(-68,0.39,r"$Leaders$", size=fntsize)
+    ax.text(-38,-0.05,"Multiple Leader", size=fntsize, rotation=90.0, fontweight="bold")
     # ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-    ax.set_title("1 bit", size=13)
+    ax.set_title("B", size=fntsize, fontweight="bold")
 
 
 
 file = './newtests/2bits/strengthstrat/singleleader/res_eps03'
 data = np.load(file + '.npy')
 
-ax = axs[0,1]
+ax = axs[1,1]
+ax.set_aspect(desired_physical_ratio * x_range / y_range)
 for iddl, deltaL in enumerate(deltaLv):
     deltaF = deltaL
     fs = 1/(1+np.exp(-deltaL))
@@ -290,19 +300,20 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += (benefit/N) * data[idr, iddl, idps, strat]
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_xlabel(r'$p_s$', fontsize=fntsize)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
     # ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-    ax.set_title("2 bits strength", size=13)
 
 file = './newtests/2bits/strengthstrat/multileader/res_eps03'
 data = np.load(file + '.npy')
 
-ax = axs[1,1]
+ax = axs[0,1]
+ax.set_aspect(desired_physical_ratio * x_range / y_range)
 for iddl, deltaL in enumerate(deltaLv):
     deltaF = deltaL
     pleadS = 1/(1+np.exp(-deltaL))
@@ -383,21 +394,22 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += benefit * data[idr, iddl, idps, strat]
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
     # ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-    ax.set_title("2 bits strength", size=13)
+    ax.set_title("S", size=fntsize, fontweight="bold")
 
 
 
 file = './newtests/2bits/leadstrat/singleleader/res_eps03'
 data = np.load(file + '.npy')
 
-ax = axs[0,2]
+ax = axs[1,2]
+ax.set_aspect(desired_physical_ratio * x_range / y_range)
 for iddl, deltaL in enumerate(deltaLv):
     deltaF = deltaL
     fs = 1/(1+np.exp(-deltaL))
@@ -459,19 +471,20 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += (benefit/N) * data[idr, iddl, idps, strat]
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_xlabel(r'$p_s$', fontsize=fntsize)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
     # ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-    ax.set_title("2 bits leader", size=13)
 
 file = './newtests/2bits/leadstrat/multileader/res_eps03'
 data = np.load(file + '.npy')
 
-ax = axs[1,2]
+ax = axs[0,2]
+ax.set_aspect(desired_physical_ratio * x_range / y_range)
 for iddl, deltaL in enumerate(deltaLv):
     deltaF = deltaL
     pleadS = 1/(1+np.exp(-deltaL))
@@ -552,19 +565,20 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += benefit * data[idr, iddl, idps, strat]
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
     # ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-    ax.set_title("2 bits leader", size=13)
+    ax.set_title("L", size=fntsize, fontweight="bold")
 
 file = './newtests/4bits/singleleader/res_eps03'
 data = np.load(file + '.npy')
 
-ax = axs[0,3]
+ax = axs[1,3]
+ax.set_aspect(desired_physical_ratio * x_range / y_range)
 for iddl, deltaL in enumerate(deltaLv):
     deltaF = deltaL
     fs = 1/(1+np.exp(-deltaL))
@@ -647,19 +661,20 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += (benefit/N) * data[idr, iddl, idps, strat]
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_xlabel(r'$p_s$', fontsize=fntsize)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
     # ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-    ax.set_title("4 bits", size=13)
 
 file = './newtests/4bits/multileader/res_eps03'
 data = np.load(file + '.npy')
 
-ax = axs[1,3]
+ax = axs[0,3]
+ax.set_aspect(desired_physical_ratio * x_range / y_range)
 for iddl, deltaL in enumerate(deltaLv):
     deltaF = deltaL
     pleadS = 1/(1+np.exp(-deltaL))
@@ -739,22 +754,22 @@ for iddl, deltaL in enumerate(deltaLv):
             res[idps] += benefit * data[idr, iddl, idps, strat]
 
     ax.set_xticks(np.linspace(0, pSv.shape[0]-1, nticksX))
-    ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=12)
-    ax.set_yticks(np.linspace(0, 1, 3))
-    ax.set_yticklabels(np.linspace(0,1,3), fontsize=12)
+    ax.set_xticklabels(["0", "0.5", "1"], fontsize=fntsize-2)
+    ax.set_yticks(np.linspace(0, 1, nticksY))
+    ax.set_yticklabels(["0", "0.2", "0.4", "0.6", "0.8", "1"], fontsize=fntsize-2)
     ax.set_ylim(0.0, 1.0)
     ax.plot(res, label='$\Delta_l=%d$'%deltaF, color=cmap((iddl)/(len(deltaLv))))
 
     # ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-    ax.set_title("4 bits", size=13)
+    ax.set_title("S + L", size=fntsize, fontweight="bold")
 
 
 
-legend_elements = [Line2D([], [], marker='None', label='$\Delta_l:$', linestyle='None')]
+legend_elements = [Line2D([], [], marker='None', label='$\Delta:$', linestyle='None')]
 legend_elements += [Line2D([], [], marker='s', color=cmap((idx)/(len(deltaLv))), label='%d'%deltaLv[idx],
                           markerfacecolor=cmap((idx)/(len(deltaLv))), markersize=10, linestyle='None') for idx in range(len(deltaLv))]
-plt.legend( loc='upper center', bbox_to_anchor=(-1.3, -0.4),
-          fancybox=True, shadow=False, ncol=6, columnspacing=0.0, handles=legend_elements,handletextpad=-0.3,fontsize=13)
-plt.savefig('./newtests/summary_eps_plots.png', bbox_inches='tight', dpi=300)
+plt.legend( loc='upper center', bbox_to_anchor=(-1.35, -0.33),
+          fancybox=True, shadow=False, ncol=6, columnspacing=0.0, handles=legend_elements,handletextpad=-0.3,fontsize=fntsize)
+plt.savefig('./newtests/summary_eps_plots_d4.png', bbox_inches='tight', dpi=300)
 
 # plt.show()

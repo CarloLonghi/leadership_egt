@@ -21,19 +21,19 @@ def plotCOOPheat(deltaFv,pSv,rv,folder):
         cmaps= ['Greens','Reds','Blues','Purples']
         step=0.025
         levels = np.arange(0.5-step, 1., step) + step
-        h=ax.contourf(np.sum(MAT[:,:,rv[idx]-1,:8], -1),levels,cmap=cmaps[0], origin='lower', extend="max")
-        h=ax.contourf(np.sum(MAT[:,:,rv[idx]-1,8:16], -1),levels,cmap='Blues', origin='lower', extend="max")
-        h=ax.contourf(MAT[:,:,rv[idx]-1,8],levels,cmap='winter', origin='lower', alpha=0.5, extend="max")
-        h=ax.contourf(MAT[:,:,rv[idx]-1,0],levels,cmap='summer', origin='lower', alpha=1.0, extend="max")
-        h=ax.contourf(MAT[:,:,rv[idx]-1,12]+MAT[:,:,rv[idx]-1,14],levels,cmap="BuPu", origin='lower',alpha=0.2, extend="max")
+        h=ax.contourf(np.sum(MAT[:32,:,rv[idx]-1,:8], -1),levels,cmap=cmaps[0], origin='lower', extend="max")
+        h=ax.contourf(np.sum(MAT[:32,:,rv[idx]-1,8:16], -1),levels,cmap='Blues', origin='lower', extend="max")
+        h=ax.contourf(MAT[:32,:,rv[idx]-1,8],levels,cmap='winter', origin='lower', alpha=0.5, extend="max")
+        h=ax.contourf(MAT[:32,:,rv[idx]-1,0],levels,cmap='summer', origin='lower', alpha=1.0, extend="max")
+        h=ax.contourf(MAT[:32,:,rv[idx]-1,12]+MAT[:32,:,rv[idx]-1,14],levels,cmap="BuPu", origin='lower',alpha=0.2, extend="max")
         #h=ax.imshow(MAT[:,:,k],origin='lower', interpolation='none',aspect='auto',vmin=0,vmax=4)
         nticksY=5
         nticksX=3
         ax.set_xticks(np.linspace(0, MAT.shape[1]-1, nticksX))
-        ax.set_yticks(np.linspace(0, MAT.shape[0]-1, nticksY))
+        ax.set_yticks(np.linspace(0, 32, nticksY))
         ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=18)
-        ax.set_yticklabels(np.linspace(deltaFv[0],deltaFv[-1],nticksY), fontsize=18)
-        ax.set_ylim(0,MAT.shape[1]-1)
+        ax.set_yticklabels(np.linspace(deltaFv[0],5.0,nticksY), fontsize=18)
+        ax.set_ylim(0,32)
         ax.set_title(f"r={rv[idx]}", fontsize=fntsize)
         # if idx==0: ax.set_title(titles[ids], size=fntsize)
         # if idx==nr-1: ax.set_xlabel(r'$p_s$', fontsize=fntsize)
@@ -71,13 +71,14 @@ def plotCOOPheat(deltaFv,pSv,rv,folder):
 
 #cb=f.colorbar(h, fraction=0.1,format='%.2f')
     #cb.set_label(label=r'$f_C$')
-    f.savefig('./newtests/summary_4bits_sd_singlleader.png',bbox_inches='tight',dpi=300)
+    f.savefig('./newtests/summary_4bits_sd_singlleader_d5.png',bbox_inches='tight',dpi=300)
     #plt.show()
     f.clf()     
     return
 
 
 deltaLv=np.linspace(0,8,num=50)
+deltaLv = deltaLv[:32]
 pSv=np.linspace(0.,1.,num=50)
 rv=np.array([3,6,8])
 

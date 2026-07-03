@@ -1,6 +1,6 @@
 import numpy as np
-import evoEGT as evo
-from heterogeneous4 import calcH, calcWCD
+import mechanics.evoEGT as evo
+from mechanics.heterogeneous16 import calcH, calcWCD
 
 def coop_pF_r(rv,M,N,HZ,beta,eps,pSv,f,betaF,deltav):
 # Input: pFv, rv, Mv (vectors with values of pF, r, and M), N, HZ (H or Z), beta, eps
@@ -8,7 +8,7 @@ def coop_pF_r(rv,M,N,HZ,beta,eps,pSv,f,betaF,deltav):
     if np.isscalar(HZ):
         H=calcH(N-1,HZ-1)
 
-    MAT = np.zeros((len(deltav), len(pSv), len(rv), 4))
+    MAT = np.zeros((len(deltav), len(pSv), len(rv), 16, 16))
 
     for iddl, deltaL in enumerate(deltav):
         deltaF = deltaL
@@ -22,9 +22,7 @@ def coop_pF_r(rv,M,N,HZ,beta,eps,pSv,f,betaF,deltav):
             print(deltaL, pS)
             for idr, r in enumerate(rv):
                 SD,fixM = evo.Wgroup2SD(WCD,H,[r,-1.],beta,infocheck=False)
-                best_s = np.argmax(SD)
-                if SD[best_s] >= 0.5:
-                    MAT[iddl, idps, idr, best_s] = SD[best_s]
+                MAT[iddl, idps, idr] = fixM
     return MAT
 
 def plotCOOPheat(MAT,deltaFv,pSv,rv,label):
@@ -161,17 +159,17 @@ if __name__ == "__main__":
 
     f=0
 
-    deltaLv=np.linspace(0,8,num=50)
-    pSv=np.linspace(0.,1.,num=50)
-    rv=np.linspace(1,10,num=10)
+    deltaLv=np.array([1.5, 4])
+    pSv=np.array([0.1, 0.5, 0.7])
+    rv=np.array([6,])
     
     # labfilenpy='results/h4/ps/sfmodel_4strats_M0_dl8_f0_dfpsr'
-    labfilenpy='./newtests/2bits/multileader/multisd_2bits_multileader'
+    labfilenpy='./newtests/4bits/multileader/fm_ip'
     MAT=coop_pF_r(rv,M,N,Z,beta,eps,pSv,f,betaF,deltaLv)
     np.save(labfilenpy,MAT)             # save matrix for heatmap
     print('data saved to file!')
     
-    MAT=np.load(labfilenpy+'.npy')      # load matrix for heatmap 
-    plotCOOPheat(MAT,deltaLv,pSv,rv,labfilenpy)      # plot heatmap
+    # MAT=np.load(labfilenpy+'.npy')      # load matrix for heatmap 
+    # plotCOOPheat(MAT,deltaLv,pSv,rv,labfilenpy)      # plot heatmap
     #plotsingleheat(MAT,fv,rv,labfilenpy)
 #####################################################

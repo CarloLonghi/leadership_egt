@@ -1,6 +1,6 @@
 import numpy as np
-import evoEGT as evo
-from heterogeneous2 import calcH, calcWCD
+import mechanics.evoEGT as evo
+from mechanics.heterogeneous4 import calcH, calcWCD
 
 def coop_pF_r(rv,M,N,HZ,beta,eps,pSv,f,betaF,deltaFv):
 # Input: pFv, rv, Mv (vectors with values of pF, r, and M), N, HZ (H or Z), beta, eps
@@ -27,40 +27,90 @@ def coop_pF_r(rv,M,N,HZ,beta,eps,pSv,f,betaF,deltaFv):
                 MAT[iddf, idps, idr, :] = SD[:,0]
     return MAT
 
-def plotCOOPheat(MAT,deltaFv,pSv,rv,label):
+def plotCOOPheat():
 # Input: MAT (matrix from "coop_pF_r" function), pFv, rv ,Mv (vectors with values of pF, r, and M), label (name for the output file)
 # Output: heatmap plot of the fraction of cooperators as a function of pF and r, for different M
     import matplotlib.pyplot as plt
     import matplotlib.patches as mpatches
-    fntsize=13
-    nr=1
-    nc=2
-    for r in rv:
-        r = int(r)
-        f,axs=plt.subplots(nrows=nr, ncols=nc, sharex='all', sharey='all', figsize=(5,2))
-        f.subplots_adjust(hspace=0.2, wspace=0.2)
-        labels = ['ALLD', 'ALLC']
-        for strat in range(2):
-            i = strat // nc
-            j = strat % nc
+    fntsize=18
+    nr=2
+    nc=4
+    r = 6
+    f,axs=plt.subplots(nrows=nr, ncols=nc, sharex='all', sharey='all', figsize=(14,7))
+    f.subplots_adjust(hspace=0.2, wspace=0.2)
 
-            ax=axs[strat]
-            cmaps=['Greens','Purples']
-            step=0.025
-            levels = np.arange(0, 1., step) + step
-            h=ax.contourf(MAT[:,:,r-1,strat],levels,cmap=cmaps[strat], origin='lower',)
-            #h=ax.imshow(MAT[:,:,k],origin='lower', interpolation='none',aspect='auto',vmin=0,vmax=4)
-            nticksY=5
-            nticksX=3
-            ax.set_xticks(np.linspace(0, MAT.shape[1]-1, nticksX))
-            ax.set_yticks(np.linspace(0, MAT.shape[0]-1, nticksY))
-            ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=10)
-            ax.set_yticklabels(np.linspace(deltaFv[0],deltaFv[-1],nticksY), fontsize=10)
-            ax.text(17.5,50,labels[strat], size=fntsize)
-            if i==nr-1: ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-            if j==0: ax.set_ylabel(r'$\Delta_f, \Delta_l$', fontsize=fntsize)
+    x_range = pSv.shape[0] - 1  # e.g. 100
+    y_range = 1.0  # ylim is 0 to 1
+
+    desired_physical_ratio = 12/13  # height/width of the box you want
+
+    labfilenpy='./newtests/2bits/strengthstrat/multileader/singlestrat_2bits_multileader'
+    MAT=np.load(labfilenpy+'.npy') 
+
+    labels = ['$\\bf{AllD}$ [00]', '$\\bf{WCSD}$ [10]', '$\\bf{WDSC}$ [01]', '$\\bf{AllC}$ [11]']
+    for strat in range(4):
+        i = strat // 2
+        j = strat % nr
+
+        ax=axs[i, j]
+        ax.set_aspect(desired_physical_ratio * x_range / y_range)
+        cmaps=['Greens', 'Reds', 'Blues','Purples']
+        step=0.025
+        levels = np.arange(0, 1., step) + step
+        h=ax.contourf(MAT[:32,:,r-1,strat],levels,cmap=cmaps[strat], origin='lower',)
+        #h=ax.imshow(MAT[:,:,k],origin='lower', interpolation='none',aspect='auto',vmin=0,vmax=4)
+        nticksY=6
+        nticksX=5
+        ax.set_xticks(np.linspace(0, MAT.shape[1]-1, nticksX))
+        ax.set_yticks(np.linspace(0, 32, nticksY))
+        ax.set_xticklabels(["0", "0.25", "0.5", "0.75", "1"], fontsize=fntsize-2)
+        ax.set_yticklabels(['0', '1', '2', '3', '4', '5'], fontsize=fntsize-2)
+        if strat == 1 or strat == 2:
+            ax.text(11.5,33.0,labels[strat], size=fntsize)
+        else:
+            ax.text(13.5,33.0,labels[strat], size=fntsize)
+        if i==nr-1: ax.set_xlabel(r'$p_s$', fontsize=fntsize)
+        if j==0: ax.set_ylabel(r'$\Delta$', fontsize=fntsize)
+        ax.set_ylim(0,32)
+        ax.set_aspect(13/10)
+
+    ax.text(-6.5, 85, "S", fontsize=fntsize, fontweight="bold")
         
-        f.savefig(f'./newtests/1bit/leadership/multileader/singlestrat_2bits_multileader_r{r}.png',bbox_inches='tight',dpi=300)
+    labfilenpy='./newtests/2bits/leadstrat/multileader/singlestrat_2bits_multileader'
+    MAT=np.load(labfilenpy+'.npy') 
+
+    labels = ['$\\bf{AllD}$ [00]', '$\\bf{NCLD}$ [10]', '$\\bf{NDLC}$ [01]', '$\\bf{AllC}$ [11]']
+    for strat in range(4):
+        i = strat // 2
+        j = 2 + strat % nr
+
+        ax=axs[i, j]
+        pos = ax.get_position()
+        ax.set_position([pos.x0 + 0.015, pos.y0, pos.width, pos.height])
+        ax.set_aspect(desired_physical_ratio * x_range / y_range)
+        cmaps=['Greens', 'Reds', 'Blues','Purples']
+        step=0.025
+        levels = np.arange(0, 1., step) + step
+        h=ax.contourf(MAT[:32,:,r-1,strat],levels,cmap=cmaps[strat], origin='lower',)
+        #h=ax.imshow(MAT[:,:,k],origin='lower', interpolation='none',aspect='auto',vmin=0,vmax=4)
+        nticksY=6
+        nticksX=5
+        ax.set_xticks(np.linspace(0, MAT.shape[1]-1, nticksX))
+        ax.set_yticks(np.linspace(0, 32, nticksY))
+        ax.set_xticklabels(["0", "0.25", "0.5", "0.75", "1"], fontsize=fntsize-2)
+        ax.set_yticklabels(['0', '1', '2', '3', '4', '5'], fontsize=fntsize-2)
+        if strat == 1 or strat == 2:
+            ax.text(11.5,33.0,labels[strat], size=fntsize)
+        else:
+            ax.text(13.5,33.0,labels[strat], size=fntsize)
+        if i==nr-1: ax.set_xlabel(r'$p_s$', fontsize=fntsize)
+        if j==0: ax.set_ylabel(r'$\Delta$', fontsize=fntsize)
+        ax.set_ylim(0,32)
+        ax.set_aspect(13/10)
+
+    ax.text(-6.5, 85, "L", fontsize=fntsize, fontweight="bold")
+
+    f.savefig(f'./newtests/2bits_r6_singlestrat.png',bbox_inches='tight',dpi=300)
     return
 
 # def plotsingleheat(MAT,fv,rv,label):
@@ -129,15 +179,15 @@ if __name__ == "__main__":
 
     deltaFv=np.linspace(0,8,num=50)
     pSv=np.linspace(0.,1.,num=50)
-    rv=np.linspace(1, 10, 10)
+    rv=[6,]
     
     # labfilenpy='results/h4/ps/sfmodel_4strats_M0_dl8_f0_dfpsr'
-    labfilenpy='./newtests/1bit/leadership/multileader/singlestrat_2bits_multileader'
-    MAT=coop_pF_r(rv,M,N,Z,beta,eps,pSv,f,betaF,deltaFv)
-    np.save(labfilenpy,MAT)             # save matrix for heatmap
-    print('data saved to file!')
+    # labfilenpy='./newtests/2bits/strengthstrat/multileader/singlestrat_2bits_multileader'
+    # MAT=coop_pF_r(rv,M,N,Z,beta,eps,pSv,f,betaF,deltaFv)
+    # np.save(labfilenpy,MAT)             # save matrix for heatmap
+    # print('data saved to file!')
     
-    MAT=np.load(labfilenpy+'.npy')      # load matrix for heatmap 
-    plotCOOPheat(MAT,deltaFv,pSv,rv,labfilenpy)      # plot heatmap
+    # MAT=np.load(labfilenpy+'.npy')      # load matrix for heatmap 
+    plotCOOPheat()      # plot heatmap
     #plotsingleheat(MAT,fv,rv,labfilenpy)
 #####################################################

@@ -1,6 +1,6 @@
 import numpy as np
-import evoEGT as evo
-from heterogeneous16 import calcH, calcWCD
+import mechanics.evoEGT as evo
+from mechanics.heterogeneous16 import calcH, calcWCD
 
 def coop_pF_r(rv,M,N,HZ,beta,eps,pSv,f,betaF,deltav):
 # Input: pFv, rv, Mv (vectors with values of pF, r, and M), N, HZ (H or Z), beta, eps
@@ -30,79 +30,121 @@ def plotCOOPheat(MAT,deltaFv,pSv,r,label,strategies):
 # Output: heatmap plot of the fraction of cooperators as a function of pF and r, for different M
     import matplotlib.pyplot as plt
     import matplotlib.patches as mpatches
-    fntsize=13
+    from matplotlib.colors import LinearSegmentedColormap
+
+    fntsize=18
     nr=5
     nc=5
-    f,axs=plt.subplots(nrows=nr, ncols=nc, sharex='all', sharey='all', figsize=(15,15))
+    f,axs=plt.subplots(nrows=nr, ncols=nc, sharey='all', figsize=(15,15))
     f.subplots_adjust(hspace=0.4, wspace=0.2)
     # labels = ["[0,0,*,*]","[1,0,*,*]","[0,1,*,*]","[1,1,*,*]"]
-    labels = ["[0,0,0,0]","[1,0,0,0]","[0,1,0,0]","[1,1,0,0]","[0,0,1,0]","[1,0,1,0]","[0,1,1,0]","[1,1,1,0]",
-              "[0,0,0,1]","[1,0,0,1]","[0,1,0,1]","[1,1,0,1]","[0,0,1,1]","[1,0,1,1]","[0,1,1,1]","[1,1,1,1]"]
+    labels = ["$\\bf{AllD}$ [0000]","[1000]","[0100]","[1100]","[0010]","[1010]","[0110]","[1110]",
+              "$\\bf{SLC}$ [0001]","[1001]","[0101]","[1101]","$\\bf{LC}$ [0011]","[1011]","$\\bf{LC}$ [0111]","$\\bf{AllC}$ [1111]"]
     cmaps=['Greens','Reds','Blues','Purples']
     step=0.025
     levels = np.arange(0, 1., step) + step
-    nticksY=5
-    nticksX=3    
+    nticksY=6
+    nticksX=5    
+
+    # create custom colormaps
+    colors = ['#ffffff', '#6b0861']  # white to purple
+    n_bins = 256
+    cmap_name = 'WhitePurple'
+    violet_cmap = LinearSegmentedColormap.from_list(cmap_name, colors, N=n_bins)
+    colors = ["#ffffff", "#42ab5d"]
+    lightgreen_cmap = LinearSegmentedColormap.from_list(cmap_name, colors, N=n_bins)
+    colors = ["#ffffff", "#004c1e"]
+    darkgreen_cmap = LinearSegmentedColormap.from_list(cmap_name, colors, N=n_bins)
+    colors = ["#ffffff", "#083674"]
+    darkblue_cmap = LinearSegmentedColormap.from_list(cmap_name, colors, N=n_bins)
+    colors = ["#ffffff", "#2777b8"]
+    lightblue_cmap = LinearSegmentedColormap.from_list(cmap_name, colors, N=n_bins) 
+
+    cmaps=["Greens",'Reds',"Blues",'Purples']           
 
     for ids, strat in enumerate(strategies):
         i = ids // 4
         j = ids % 4
 
+        if ids == 12 or ids == 14:
+            cmap = violet_cmap
+        elif ids == 0:
+            cmap = plt.get_cmap("Greens")
+        elif ids == 8:
+            cmap = plt.get_cmap("Blues")
+        else:
+            cmap = cmaps[ids//4]
+
         ax=axs[i,j]
-        h=ax.contourf(np.sum(MAT[:,:,r-1,strat],axis=-1),levels,cmap=cmaps[ids//4], origin='lower',)
+        h=ax.contourf(np.sum(MAT[:32,:,r-1,strat],axis=-1),levels,cmap=cmap, origin='lower',)
         #h=ax.imshow(MAT[:,:,k],origin='lower', interpolation='none',aspect='auto',vmin=0,vmax=4)
         ax.set_xticks(np.linspace(0, MAT.shape[1]-1, nticksX))
-        ax.set_yticks(np.linspace(0, MAT.shape[0]-1, nticksY))
-        ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=10)
-        ax.set_yticklabels(np.linspace(deltaFv[0],deltaFv[-1],nticksY), fontsize=10)
-        ax.text(17.5,50,labels[ids], size=fntsize)
+        ax.set_yticks(np.linspace(0, 32, nticksY))
+        if i == 4: ax.set_xticklabels(["0", "0.25", "0.5", "0.75", "1"], fontsize=fntsize-2)
+        else: ax.set_xticklabels([], fontsize=fntsize-2)
+        ax.set_yticklabels(['0', '1', '2', '3', '4', '5'], fontsize=fntsize-2)
+        if ids == 0 or ids == 15 or ids == 8:
+            ax.text(7.5,34,labels[ids], size=fntsize)
+        elif ids == 12 or ids == 14:
+            ax.text(9.5,34,labels[ids], size=fntsize)
+        else:
+            ax.text(14.5,34,labels[ids], size=fntsize)
         #if i==nr-1: ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-        if j==0: ax.set_ylabel(r'$\Delta_f, \Delta_l$', fontsize=fntsize)
+        if j==0: ax.set_ylabel(r'$\Delta$', fontsize=fntsize)
 
         # # insert markers for invasion graphs
         # points_x = [MAT.shape[1] // 2 - 0.5, MAT.shape[1] // 2 - 0.5, MAT.shape[1] // 2 - 0.5]
         # points_y = [0.7, MAT.shape[0] // 8 - 0.5, MAT.shape[0] // 4 - 0.5]
         # ax.scatter(points_x, points_y, color='goldenrod', marker='o')
+        ax.set_ylim(0,32)
+        ax.set_aspect(13/10)
 
     strategies = np.array([
         [0,4,8,12],
         [1,5,9,13],
         [2,6,10,14],
         [3,7,11,15]])    
-    labels = ["[0,0,*,*]","[1,0,*,*]","[0,1,*,*]","[1,1,*,*]"]
+    labels = ["[00**]","[10**]","[01**]","[11**]"]
     
     for ids, strat in enumerate(strategies):
         ax = axs[4, ids]    
-        h=ax.contourf(np.sum(MAT[:,:,r-1,strat],axis=-1),levels,cmap=cmaps[ids%4], origin='lower',)
+        h=ax.contourf(np.sum(MAT[:32,:,r-1,strat],axis=-1),levels,cmap="Greys", origin='lower',)
         ax.set_xticks(np.linspace(0, MAT.shape[1]-1, nticksX))
-        ax.set_yticks(np.linspace(0, MAT.shape[0]-1, nticksY))
-        ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=10)
-        ax.set_yticklabels(np.linspace(deltaFv[0],deltaFv[-1],nticksY), fontsize=10)
-        ax.text(17.5,50,labels[ids], size=fntsize)
+        ax.set_yticks(np.linspace(0, 32, nticksY))
+        ax.set_xticklabels(["0", "0.25", "0.5", "0.75", "1"], fontsize=fntsize-2)
+        ax.set_yticklabels(['0', '1', '2', '3', '4', '5'], fontsize=fntsize-2)
+        ax.text(15.5,34,labels[ids], size=fntsize)
         ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-        if ids == 0: ax.set_ylabel(r'$\Delta_f, \Delta_l$', fontsize=fntsize)    
+        if ids == 0: ax.set_ylabel(r'$\Delta$', fontsize=fntsize)    
+        ax.set_ylim(0,32)
+        ax.set_aspect(13/10)
 
     strategies = np.array([
         [0,1,2,3],
         [4,5,6,7],
         [8,9,10,11],
         [12,13,14,15]])
-    labels = ["[*,*,0,0]","[*,*,1,0]","[*,*,0,1]","[*,*,1,1]"]
-    
+    labels = ["[**00]","[**10]","[**01]","[**11]"]
+
+    cmaps = [plt.get_cmap("Greens"), plt.get_cmap("Reds"), plt.get_cmap("Blues"), violet_cmap]    
     for ids, strat in enumerate(strategies):
         ax = axs[ids, 4]    
-        h=ax.contourf(np.sum(MAT[:,:,r-1,strat],axis=-1),levels,cmap=cmaps[ids%4], origin='lower',)
+
+        h=ax.contourf(np.sum(MAT[:32,:,r-1,strat],axis=-1),levels,cmap=cmaps[ids], origin='lower',)
         ax.set_xticks(np.linspace(0, MAT.shape[1]-1, nticksX))
-        ax.set_yticks(np.linspace(0, MAT.shape[0]-1, nticksY))
-        ax.set_xticklabels(np.linspace(pSv[0],pSv[-1],nticksX), fontsize=10)
-        ax.set_yticklabels(np.linspace(deltaFv[0],deltaFv[-1],nticksY), fontsize=10)
-        ax.text(17.5,50,labels[ids], size=fntsize)
+        ax.set_yticks(np.linspace(0, 32, nticksY))
+        if ids == 3: ax.set_xticklabels(["0", "0.25", "0.5", "0.75", "1"], fontsize=fntsize-2)
+        else: ax.set_xticklabels([], fontsize=fntsize-2)
+        ax.set_yticklabels(['0', '1', '2', '3', '4', '5'], fontsize=fntsize-2)
+        ax.text(15.5,34,labels[ids], size=fntsize)
         # if i==nr-1: ax.set_xlabel(r'$p_s$', fontsize=fntsize)
-        # if j==0: ax.set_ylabel(r'$\Delta_f, \Delta_l$', fontsize=fntsize)                
+        # if j==0: ax.set_ylabel(r'$\Delta_f, \Delta_l$', fontsize=fntsize)
+        ax.set_ylim(0,32)    
+        ax.set_aspect(13/10)            
     
-    ax.text(-99, 275, f"r={r}",size=18)
+    # ax.text(-99, 275, f"r={r}",size=18)
     f.delaxes(axs[nr-1, nc-1])
-    f.savefig(f'newtests/4bits/multileader/aggregates_strategies_r{r}_lead_new.png',bbox_inches='tight',dpi=300)
+    f.savefig(f'newtests/aggregates_strategies_r{r}_4bits.png',bbox_inches='tight',dpi=300)
     #plt.show()
     return
 
@@ -183,7 +225,6 @@ if __name__ == "__main__":
     MAT=np.load(labfilenpy+'.npy')      # load matrix for heatmap 
    
     strategies = np.array([[i,] for i in range(16)])
-    for r in rv:
-        plotCOOPheat(MAT,deltaLv,pSv,int(r),labfilenpy,strategies)      # plot heatmap
+    plotCOOPheat(MAT,deltaLv,pSv,6,labfilenpy,strategies)      # plot heatmap
     # plotsingleheat(MAT,fv,rv,labfilenpy)
 #####################################################
