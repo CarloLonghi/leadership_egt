@@ -2,3 +2,12 @@
 __pycache__
 results
 .vscode
+2bitleader
+2leaders
+despot
+figures
+multileader
+newtests
+test
+*.ipynb
+*_plot*.py
