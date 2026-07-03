@@ -2,3 +2,14 @@
 __pycache__
 data_followers
 results
+.vscode
+2bitleader
+despot
+figures
+multileader
+newtests
+2leaders
+summary_*
+*.ipynb
+*_plots.py
+test

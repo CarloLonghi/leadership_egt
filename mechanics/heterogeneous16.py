@@ -1,12 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar  7 10:40:35 2019
-
-@author: abraxas
-"""
-
-import evoEGT as evo
+import mechanics.evoEGT as evo
 
 import numpy as np
 import math
@@ -47,17 +39,17 @@ def fl(sl,eps):
 def calcWCD(N,eps,pF,deltaL,pS,M):
 # Input: N group size, eps error when trying to perform an action, r multiplicative constant for the PGG (assuming c=1), pF probability of following leader, M number of individuals that need to cooperate in order to get any benefit
 # Output: WCD[i,k,ip] payoffs (i=0 defector, i=1 cooperator; k number of cooperators in the group; ip coef associated to the parameter payoffs r (ip=0) and c (ip=1))
-    WCD=np.zeros((4,4,N+1,2))
+    WCD=np.zeros((16,16,N+1,2))
     eps1=1.-eps
 
     pW = 1. - pS
     pleadS = 1 / (1 + np.exp(-deltaL))
     pleadW = 1 - pleadS
 
-    for i in range(4):
-        s1=[i%2,i//2] # s:[w,s], 0:[0,0], 1:[1,0], 2:[0,1], 3:[1,1]
-        for j in range(4):
-            s2=[j%2,j//2]
+    for i in range(16):
+        s1=[i%8%4%2//1, i%8%4//2, i%8//4, i//8] # s:[w,s], 0:[0,0], 1:[1,0], 2:[0,1], 3:[1,1]
+        for j in range(16):
+            s2=[j%8%4%2//1, j%8%4//2, j%8//4, j//8]
             for k in range(1,N): # k: number of players following strategy s1
                 benefit = 0
                 cost = 0
@@ -93,10 +85,10 @@ def calcWCD(N,eps,pF,deltaL,pS,M):
                                         Nwd = (nw1-nw1l)*(1-s1[0]) + (nw2-nw2l)*(1-s2[0])
                                         Nsd = (ns1-ns1l)*(1-s1[1]) + (ns2-ns2l)*(1-s2[1])
 
-                                        Nwcl = nw1l*s1[0] + nw2l*s2[0]
-                                        Nscl = ns1l*s1[1] + ns2l*s2[1]
-                                        Nwdl = nw1l*(1-s1[0]) + nw2l*(1-s2[0])
-                                        Nsdl = ns1l*(1-s1[1]) + ns2l*(1-s2[1])
+                                        Nwcl = nw1l*s1[2] + nw2l*s2[2]
+                                        Nscl = ns1l*s1[3] + ns2l*s2[3]
+                                        Nwdl = nw1l*(1-s1[2]) + nw2l*(1-s2[2])
+                                        Nsdl = ns1l*(1-s1[3]) + ns2l*(1-s2[3])
                                         Nwl = Nwcl + Nwdl
                                         Nsl = Nscl + Nsdl
 
@@ -119,6 +111,10 @@ def calcWCD(N,eps,pF,deltaL,pS,M):
                                             benefit += final_prob*(
                                                 (Nwcl + Nscl)*eps1 + (Nwdl + Nsdl)*eps # leaders
                                             )
+                                            cost += final_prob*(
+                                                (nw1l/k)*aeps(s1[2], eps)+
+                                                (ns1l/k)*aeps(s1[3], eps)
+                                            )
                                             if Nwl > 0:
                                                 benefit += final_prob*(
                                                     follow_w*(
@@ -129,30 +125,21 @@ def calcWCD(N,eps,pF,deltaL,pS,M):
                                                     )
                                                 )
 
-                                                if nw1 > 0:
-                                                    cost += final_prob*(
-                                                        (nw1/k)*(
-                                                            (nw1l/nw1)*(aeps(s1[0], eps))+
-                                                            (1-(nw1l/nw1))*(
-                                                                follow_w*(
-                                                                    (1-pF[0,0])*aeps(s1[0], eps)+
-                                                                    pF[0,0]*((Nwcl/Nwl)*(eps1**2+eps**2) + (Nwdl/Nwl)*(2*eps1*eps))
-                                                                )
-                                                            )
+                                                cost += final_prob*(
+                                                    ((nw1-nw1l)/k)*(
+                                                        follow_w*(
+                                                            (1-pF[0,0])*aeps(s1[0], eps)+
+                                                            pF[0,0]*((Nwcl/Nwl)*(eps1**2+eps**2) + (Nwdl/Nwl)*(2*eps1*eps))
                                                         )
-                                                    )       
-                                                if ns1 > 0:
-                                                    cost += final_prob*(
-                                                        (ns1/k)*(
-                                                            (1-(ns1l/ns1))*(
-                                                                follow_w*(
-                                                                    (1-pF[1,0])*aeps(s1[1], eps)+
-                                                                    pF[1,0]*((Nwcl/Nwl)*(eps1**2+eps**2) + (Nwdl/Nwl)*(2*eps1*eps))
-                                                                )
-                                                            )
+                                                    )+
+                                                    ((ns1-ns1l)/k)*(
+                                                        follow_w*(
+                                                            (1-pF[1,0])*aeps(s1[1], eps)+
+                                                            pF[1,0]**((Nwcl/Nwl)*(eps1**2+eps**2) + (Nwdl/Nwl)*(2*eps1*eps))
                                                         )
                                                     )
-                                            
+                                                )
+
                                             if Nsl > 0:
                                                 benefit += final_prob*(
                                                     follow_s*(
@@ -162,29 +149,20 @@ def calcWCD(N,eps,pF,deltaL,pS,M):
                                                         pF[1,1]*Nsnl*((Nscl/Nsl)*(eps1**2+eps**2) + (Nsdl/Nsl)*(2*eps1*eps))                                                
                                                     )
                                                 )
-                                                if nw1 > 0:
-                                                    cost += final_prob*(
-                                                        (nw1/k)*(
-                                                            (1-(nw1l/nw1))*(
-                                                                follow_s*(
-                                                                    (1-pF[0,1])*aeps(s1[0], eps)+
-                                                                    pF[0,1]*((Nscl/Nsl)*(eps1**2+eps**2) + (Nsdl/Nsl)*(2*eps1*eps))
-                                                                )
-                                                            )
+                                                cost += final_prob*(
+                                                    ((nw1-nw1l)/k)*(
+                                                        follow_s*(
+                                                            (1-pF[0,1])*aeps(s1[0], eps)+
+                                                            pF[0,1]*((Nscl/Nsl)*(eps1**2+eps**2) + (Nsdl/Nsl)*(2*eps1*eps))
+                                                        )
+                                                    )+
+                                                    ((ns1-ns1l)/k)*(
+                                                        follow_s*(
+                                                            (1-pF[1,1])*aeps(s1[1], eps)+
+                                                            pF[1,1]**((Nscl/Nsl)*(eps1**2+eps**2) + (Nsdl/Nsl)*(2*eps1*eps))
                                                         )
                                                     )
-                                                if ns1 > 0:
-                                                    cost += final_prob*(
-                                                        (ns1/k)*(
-                                                            (ns1l/ns1)*(aeps(s1[1], eps))+
-                                                            (1-(ns1l/ns1))*(
-                                                                follow_s*(
-                                                                    (1-pF[1,1])*aeps(s1[1], eps)+
-                                                                    pF[1,1]*((Nscl/Nsl)*(eps1**2+eps**2) + (Nsdl/Nsl)*(2*eps1*eps))
-                                                                )
-                                                            )
-                                                        )
-                                                    )                                                
+                                                )                                              
 
                 if benefit > M:
                     WCD[i,j,k,0] = benefit/N
@@ -209,10 +187,10 @@ def calcWCD(N,eps,pF,deltaL,pS,M):
                         Nwd = (nw1-nw1l)*(1-s1[0])
                         Nsd = (ns1-ns1l)*(1-s1[1])
 
-                        Nwcl = nw1l*s1[0]
-                        Nscl = ns1l*s1[1]
-                        Nwdl = nw1l*(1-s1[0])
-                        Nsdl = ns1l*(1-s1[1])
+                        Nwcl = nw1l*s1[2]
+                        Nscl = ns1l*s1[3]
+                        Nwdl = nw1l*(1-s1[2])
+                        Nsdl = ns1l*(1-s1[3])
                         Nwl = Nwcl + Nwdl
                         Nsl = Nscl + Nsdl
 
@@ -232,7 +210,11 @@ def calcWCD(N,eps,pF,deltaL,pS,M):
                             follow_w = (pleadW * Nwl) / (pleadS * Nsl + pleadW * Nwl)      
                             benefit += pNs*probl*(
                                 (Nwcl + Nscl) * eps1 + (Nwdl + Nsdl) * eps # leaders
-                            )                      
+                            )
+                            cost += pNs*probl*(
+                                (nw1l/N)*aeps(s1[2], eps)+
+                                (ns1l/N)*aeps(s1[3], eps)
+                            )
                             if Nwl > 0:
                                 benefit += pNs*probl*(
                                     follow_w*(
@@ -243,29 +225,20 @@ def calcWCD(N,eps,pF,deltaL,pS,M):
                                     )
                                 )
 
-                                if nw1 > 0:
-                                    cost += pNs*probl*(
-                                        (nw1/N)*(
-                                            (nw1l/nw1)*(aeps(s1[0], eps))+
-                                            (1-(nw1l/nw1))*(
-                                                follow_w*(
-                                                    (1-pF[0,0])*aeps(s1[0], eps)+
-                                                    pF[0,0]*((Nwcl/Nwl)*(eps1**2+eps**2) + (Nwdl/Nwl)*(2*eps1*eps))
-                                                )
-                                            )
+                                cost += pNs*probl*(
+                                    ((nw1-nw1l)/N)*(
+                                        follow_w*(
+                                            (1-pF[0,0])*aeps(s1[0], eps)+
+                                            pF[0,0]*((Nwcl/Nwl)*(eps1**2+eps**2) + (Nwdl/Nwl)*(2*eps1*eps))
+                                        )
+                                    )+
+                                    ((ns1-ns1l)/N)*(
+                                        follow_w*(
+                                            (1-pF[1,0])*aeps(s1[1], eps)+
+                                            pF[1,0]**((Nwcl/Nwl)*(eps1**2+eps**2) + (Nwdl/Nwl)*(2*eps1*eps))
                                         )
                                     )
-                                if ns1 > 0:
-                                    cost += pNs*probl*(
-                                        (ns1/N)*(
-                                            (1-(ns1l/ns1))*(
-                                                follow_w*(
-                                                    (1-pF[1,0])*aeps(s1[1], eps)+
-                                                    pF[1,0]*((Nwcl/Nwl)*(eps1**2+eps**2) + (Nwdl/Nwl)*(2*eps1*eps))
-                                                )
-                                            )
-                                        )
-                                    )                                
+                                )                             
 
                             if Nsl > 0:
                                 benefit += pNs*probl*(
@@ -276,29 +249,20 @@ def calcWCD(N,eps,pF,deltaL,pS,M):
                                         pF[1,1]*Nsnl*((Nscl/Nsl)*(eps1**2+eps**2) + (Nsdl/Nsl)*(2*eps1*eps))                                                
                                     )
                                 )
-                                if nw1 > 0:
-                                    cost += pNs*probl*(
-                                        (nw1/N)*(
-                                            (1-(nw1l/nw1))*(
-                                                follow_s*(
-                                                    (1-pF[0,1])*aeps(s1[0], eps)+
-                                                    pF[0,1]*((Nscl/Nsl)*(eps1**2+eps**2) + (Nsdl/Nsl)*(2*eps1*eps))
-                                                )
-                                            )
+                                cost += pNs*probl*(
+                                    ((nw1-nw1l)/N)*(
+                                        follow_s*(
+                                            (1-pF[0,1])*aeps(s1[0], eps)+
+                                            pF[0,1]*((Nscl/Nsl)*(eps1**2+eps**2) + (Nsdl/Nsl)*(2*eps1*eps))
+                                        )
+                                    )+
+                                    ((ns1-ns1l)/N)*(
+                                        follow_s*(
+                                            (1-pF[1,1])*aeps(s1[1], eps)+
+                                            pF[1,1]**((Nscl/Nsl)*(eps1**2+eps**2) + (Nsdl/Nsl)*(2*eps1*eps))
                                         )
                                     )
-                                if ns1 > 0:
-                                    cost +=pNs*probl*(
-                                        (ns1/N)*(
-                                            (ns1l/ns1)*(aeps(s1[1], eps))+
-                                            (1-(ns1l/ns1))*(
-                                                follow_s*(
-                                                    (1-pF[1,1])*aeps(s1[1], eps)+
-                                                    pF[1,1]*((Nscl/Nsl)*(eps1**2+eps**2) + (Nsdl/Nsl)*(2*eps1*eps))
-                                                )
-                                            )
-                                        )
-                                    )                                
+                                )
             if benefit > M:
                 WCD[i,j,N,0] = benefit/N
             WCD[i,j,N,1] = cost
